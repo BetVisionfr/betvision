@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — BetVision</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --or:#C9A84C;--or-light:#E2C47A;--noir:#0A0A0A;--noir-card:#131313;
+    --noir-border:#1E1E1E;--gris:#888;--blanc:#F5F0E8;
+    --vert-light:#52B788;--rouge-light:#E07A7A;
+    --font-titre:'Playfair Display',serif;--font-corps:'DM Sans',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--noir);color:var(--blanc);font-family:var(--font-corps);font-weight:300;line-height:1.7;overflow-x:hidden;}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.2rem 4rem;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--noir-border);background:rgba(10,10,10,0.92);backdrop-filter:blur(12px);}
+  .nav-logo{font-family:var(--font-titre);font-size:1.3rem;color:var(--or);letter-spacing:3px;text-decoration:none;}
+  .nav-home{background:transparent;color:var(--gris);border:0.5px solid var(--noir-border);padding:0.4rem 1rem;border-radius:2px;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;text-decoration:none;transition:all 0.3s;}
+  .nav-home:hover{border-color:var(--or);color:var(--or);}
+  .hamburger{display:flex;flex-direction:column;gap:5px;cursor:pointer;padding:6px;background:none;border:none;z-index:200;}
+  .hamburger span{display:block;width:24px;height:1.5px;background:var(--or);transition:all 0.3s ease;}
+  .hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
+  .hamburger.open span:nth-child(2){opacity:0;}
+  .hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+  .menu-overlay{position:fixed;top:58px;right:2rem;background:rgba(10,10,10,0.97);border:0.5px solid var(--noir-border);border-radius:4px;z-index:150;min-width:220px;opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity 0.25s ease,transform 0.25s ease;backdrop-filter:blur(12px);}
+  .menu-overlay.open{opacity:1;transform:translateY(0);pointer-events:all;}
+  .menu-overlay a{font-family:var(--font-corps);font-size:0.8rem;color:var(--blanc);text-decoration:none;letter-spacing:2px;text-transform:uppercase;padding:0.85rem 1.5rem;border-bottom:0.5px solid var(--noir-border);display:block;transition:color 0.2s,background 0.2s;}
+  .menu-overlay a:last-child{border-bottom:none;}
+  .menu-overlay a:hover{color:var(--or);background:rgba(201,168,76,0.05);}
+  .menu-overlay a.menu-vip{color:var(--or);}
+
+  .page{max-width:860px;margin:0 auto;padding:8rem 2rem 5rem;}
+
+  .section-tag{font-size:0.7rem;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:1rem;display:block;}
+  .page-titre{font-family:var(--font-titre);font-size:clamp(2rem,5vw,3rem);color:var(--blanc);line-height:1.2;margin-bottom:0.5rem;}
+  .page-sub{font-size:0.9rem;color:var(--gris);margin-bottom:3.5rem;max-width:480px;}
+
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;}
+
+  /* FORMULAIRE */
+  .form-wrap{}
+  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:1.25rem;}
+  .field label{font-size:0.65rem;letter-spacing:2px;color:var(--gris);text-transform:uppercase;}
+  .field input,.field textarea,.field select{
+    background:var(--noir);border:0.5px solid var(--noir-border);color:var(--blanc);
+    padding:0.85rem 1rem;font-family:var(--font-corps);font-size:0.88rem;
+    border-radius:2px;outline:none;width:100%;transition:border-color 0.2s;
+  }
+  .field input:focus,.field textarea:focus{border-color:var(--or);}
+  .field textarea{resize:vertical;min-height:130px;}
+  .field select option{background:var(--noir-card);}
+
+  .btn-send{background:var(--or);color:var(--noir);padding:0.85rem 2rem;border:none;border-radius:2px;font-family:var(--font-corps);font-size:0.78rem;font-weight:500;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:background 0.2s,transform 0.1s;width:100%;}
+  .btn-send:hover{background:var(--or-light);transform:translateY(-1px);}
+
+  .form-success{display:none;background:rgba(82,183,136,0.1);border:0.5px solid var(--vert-light);border-radius:2px;padding:1rem 1.25rem;font-size:0.85rem;color:var(--vert-light);margin-top:1rem;text-align:center;}
+  .form-success.show{display:block;}
+
+  /* INFOS CONTACT */
+  .contact-infos{}
+  .contact-block{margin-bottom:2.5rem;}
+  .contact-block-label{font-size:0.65rem;letter-spacing:3px;color:var(--or);text-transform:uppercase;margin-bottom:0.75rem;}
+
+  .contact-link{display:flex;align-items:center;gap:14px;padding:1rem 1.25rem;border:0.5px solid var(--noir-border);text-decoration:none;transition:all 0.2s;margin-bottom:1px;}
+  .contact-link:hover{border-color:var(--or);background:rgba(201,168,76,0.04);}
+  .contact-link-icon{width:36px;height:36px;border:0.5px solid var(--noir-border);border-radius:2px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;}
+  .contact-link-text{}
+  .contact-link-name{font-size:0.82rem;color:var(--blanc);font-weight:500;}
+  .contact-link-handle{font-size:0.72rem;color:var(--gris);margin-top:1px;}
+  .contact-link-arrow{margin-left:auto;color:var(--gris);font-size:0.8rem;transition:color 0.2s;}
+  .contact-link:hover .contact-link-arrow{color:var(--or);}
+
+  .contact-email{padding:1.25rem;border:0.5px solid var(--noir-border);border-left:2px solid var(--or);}
+  .contact-email-label{font-size:0.65rem;letter-spacing:2px;color:var(--gris);text-transform:uppercase;margin-bottom:4px;}
+  .contact-email-addr{font-size:0.9rem;color:var(--or);}
+
+  footer{border-top:0.5px solid var(--noir-border);padding:2rem 4rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-top:5rem;}
+  .footer-logo{font-family:var(--font-titre);font-size:1.1rem;color:var(--or);letter-spacing:3px;}
+  .footer-tagline{font-size:0.68rem;letter-spacing:3px;color:#444;text-transform:uppercase;margin-top:4px;}
+  .footer-copy{font-size:0.7rem;color:#333;width:100%;text-align:center;padding-top:1.5rem;border-top:0.5px solid var(--noir-border);margin-top:0.5rem;}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+  .fade{opacity:0;animation:fadeUp 0.8s ease forwards;}
+
+  @media(max-width:700px){
+    nav{padding:1rem 1.5rem;}
+    .page{padding:7rem 1.5rem 4rem;}
+    .contact-grid{grid-template-columns:1fr;gap:3rem;}
+    footer{padding:2rem 1.5rem;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">BETVISION<span style="display:block;font-family:var(--font-corps);font-size:0.55rem;letter-spacing:2px;color:var(--gris);font-weight:300;margin-top:2px;text-transform:uppercase;">On décrypte le sport, tu décides.</span></a>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <a href="index.html" class="nav-home">⌂ Home</a>
+    <button class="hamburger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="menu-overlay" id="menu">
+  <a href="index.html">Accueil</a>
+  <a href="analyses.html">Le prono du jour</a>
+  <a href="https://t.me/BettingVisionfr" target="_blank">Communauté Telegram</a>
+  <a href="bilan.html">Bilan</a>
+  <a href="rejoindre.html" class="menu-vip">Nous rejoindre <span style="background:#C9A84C;color:#0A0A0A;font-size:0.6rem;font-weight:500;padding:2px 6px;border-radius:2px;letter-spacing:1px;margin-left:6px;vertical-align:middle;">VIP</span></a>
+  <a href="contact.html">Contact</a>
+</div>
+
+<div class="page">
+
+  <div class="fade" style="animation-delay:0.1s">
+    <span class="section-tag">On est là</span>
+    <h1 class="page-titre">Nous contacter</h1>
+    <p class="page-sub">Une question, un retour, une idée ? Écris-nous. On répond à tout.</p>
+  </div>
+
+  <div class="contact-grid">
+
+    <!-- FORMULAIRE -->
+    <div class="form-wrap fade" style="animation-delay:0.2s">
+      <div class="field">
+        <label>Ton prénom</label>
+        <input type="text" id="f-nom" placeholder="ex: Thomas"/>
+      </div>
+      <div class="field">
+        <label>Ton email</label>
+        <input type="email" id="f-email" placeholder="ex: thomas@gmail.com"/>
+      </div>
+      <div class="field">
+        <label>Sujet</label>
+        <select id="f-sujet">
+          <option value="">Choisir un sujet</option>
+          <option>Question sur un prono</option>
+          <option>Rejoindre le VIP</option>
+          <option>Problème technique</option>
+          <option>Suggestion</option>
+          <option>Autre</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Message</label>
+        <textarea id="f-message" placeholder="Dis-nous tout..."></textarea>
+      </div>
+      <button class="btn-send" onclick="sendForm()">Envoyer le message</button>
+      <div class="form-success" id="formSuccess">
+        ✓ Message envoyé — on te répond dans les 24h.
+      </div>
+    </div>
+
+    <!-- INFOS -->
+    <div class="contact-infos fade" style="animation-delay:0.35s">
+
+      <div class="contact-block">
+        <div class="contact-block-label">Email</div>
+        <div class="contact-email">
+          <div class="contact-email-label">Adresse</div>
+          <div class="contact-email-addr">bettingvisionfr@gmail.com</div>
+        </div>
+      </div>
+
+      <div class="contact-block">
+        <div class="contact-block-label">Réseaux sociaux</div>
+
+        <a href="https://twitter.com/betvision_fr" target="_blank" class="contact-link">
+          <div class="contact-link-icon">𝕏</div>
+          <div class="contact-link-text">
+            <div class="contact-link-name">X / Twitter</div>
+            <div class="contact-link-handle">@betvision_fr</div>
+          </div>
+          <div class="contact-link-arrow">→</div>
+        </a>
+
+        <a href="https://instagram.com/betvision_fr" target="_blank" class="contact-link">
+          <div class="contact-link-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <rect x="2" y="2" width="20" height="20" rx="5" stroke="#C9A84C" stroke-width="1.5"/>
+              <circle cx="12" cy="12" r="4" stroke="#C9A84C" stroke-width="1.5"/>
+              <circle cx="17.5" cy="6.5" r="1" fill="#C9A84C"/>
+            </svg>
+          </div>
+          <div class="contact-link-text">
+            <div class="contact-link-name">Instagram</div>
+            <div class="contact-link-handle">@betvision_fr</div>
+          </div>
+          <div class="contact-link-arrow">→</div>
+        </a>
+
+        <a href="https://tiktok.com/@betvision_fr" target="_blank" class="contact-link">
+          <div class="contact-link-icon">
+            <svg width="14" height="16" viewBox="0 0 24 28" fill="none">
+              <path d="M16 2c.5 3.5 2.5 5.5 6 6v4c-2 0-4-.5-6-1.5V18a8 8 0 1 1-8-8v4a4 4 0 1 0 4 4V2h4z" stroke="#C9A84C" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="contact-link-text">
+            <div class="contact-link-name">TikTok</div>
+            <div class="contact-link-handle">@betvision_fr</div>
+          </div>
+          <div class="contact-link-arrow">→</div>
+        </a>
+
+        <a href="https://t.me/BettingVisionfr" target="_blank" class="contact-link">
+          <div class="contact-link-icon">
+            <svg width="16" height="14" viewBox="0 0 24 20" fill="none">
+              <path d="M22 1L1 8.5l7 2.5 2 7 4-4 5 4L22 1z" stroke="#C9A84C" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M8 11l2.5 7" stroke="#C9A84C" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="contact-link-text">
+            <div class="contact-link-name">Telegram VIP</div>
+            <div class="contact-link-handle">@BettingVisionfr</div>
+          </div>
+          <div class="contact-link-arrow" style="color:var(--or);">→</div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div>
+    <div class="footer-logo">BETVISION</div>
+    <div class="footer-tagline">Décrypte · Partage · Progresse</div>
+  </div>
+  <ul style="display:flex;gap:2rem;list-style:none;flex-wrap:wrap;"><li><a href="index.html" style="color:var(--gris);text-decoration:none;font-size:0.8rem;letter-spacing:1px;transition:color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#888'">Accueil</a></li><li><a href="analyses.html" style="color:var(--gris);text-decoration:none;font-size:0.8rem;letter-spacing:1px;transition:color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#888'">Le prono du jour</a></li><li><a href="bilan.html" style="color:var(--gris);text-decoration:none;font-size:0.8rem;letter-spacing:1px;transition:color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#888'">Bilan</a></li><li><a href="rejoindre.html" style="color:var(--gris);text-decoration:none;font-size:0.8rem;letter-spacing:1px;transition:color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#888'">Nous rejoindre <span style="background:#C9A84C;color:#0A0A0A;font-size:0.55rem;font-weight:500;padding:1px 5px;border-radius:2px;letter-spacing:1px;margin-left:4px;vertical-align:middle;">VIP</span></a></li><li><a href="contact.html" style="color:var(--gris);text-decoration:none;font-size:0.8rem;letter-spacing:1px;transition:color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#888'">Contact</a></li></ul>
+  <div class="footer-copy">© 2026 BetVision — Jouer comporte des risques, jouez de manière responsable.</div>
+</footer>
+
+<script>
+function sendForm() {
+  const nom = document.getElementById('f-nom').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const message = document.getElementById('f-message').value.trim();
+  if (!nom || !email || !message) {
+    alert('Merci de remplir au moins ton prénom, ton email et ton message.');
+    return;
+  }
+  // Ouvre le client mail avec les infos pré-remplies
+  const sujet = document.getElementById('f-sujet').value || 'Contact BetVision';
+  const body = `Prénom : ${nom}\nMessage :\n${message}`;
+  window.location.href = `mailto:bettingvisionfr@gmail.com?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(body)}`;
+  document.getElementById('formSuccess').classList.add('show');
+  ['f-nom','f-email','f-message'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-sujet').value = '';
+}
+
+const burger = document.getElementById('burger');
+const menu = document.getElementById('menu');
+burger.addEventListener('click', () => {
+  burger.classList.toggle('open');
+  menu.classList.toggle('open');
+  document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+});
+menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  burger.classList.remove('open');
+  menu.classList.remove('open');
+  document.body.style.overflow = '';
+}));
+</script>
+</body>
+</html>

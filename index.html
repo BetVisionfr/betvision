@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BetVision — On décrypte le sport, tu décides</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --or: #C9A84C;
+    --or-light: #E2C47A;
+    --noir: #0A0A0A;
+    --noir-card: #131313;
+    --noir-border: #1E1E1E;
+    --gris: #888;
+    --blanc: #F5F0E8;
+    --font-titre: 'Playfair Display', serif;
+    --font-corps: 'DM Sans', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--noir);
+    color: var(--blanc);
+    font-family: var(--font-corps);
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* GRAIN OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.2rem 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 0.5px solid var(--noir-border);
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(12px);
+  }
+
+  .nav-logo {
+    font-family: var(--font-titre);
+    font-size: 1.3rem;
+    color: var(--or);
+    letter-spacing: 3px;
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--gris);
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+
+  .nav-links a:hover { color: var(--or); }
+
+  .nav-home {
+    background: transparent;
+    color: var(--gris);
+    border: 0.5px solid var(--noir-border);
+    padding: 0.4rem 1rem;
+    border-radius: 2px;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+
+  .nav-home:hover { border-color: var(--or); color: var(--or); }
+
+  .hamburger {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 6px;
+    background: none;
+    border: none;
+    z-index: 200;
+  }
+
+  .hamburger span {
+    display: block;
+    width: 24px;
+    height: 1.5px;
+    background: var(--or);
+    transition: all 0.3s ease;
+  }
+
+  .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  .menu-overlay {
+    position: fixed;
+    top: 58px;
+    right: 2rem;
+    background: rgba(10,10,10,0.97);
+    border: 0.5px solid var(--noir-border);
+    border-radius: 4px;
+    z-index: 150;
+    min-width: 220px;
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    backdrop-filter: blur(12px);
+  }
+
+  .menu-overlay.open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+  }
+
+  .menu-overlay a {
+    font-family: var(--font-corps);
+    font-size: 0.8rem;
+    color: var(--blanc);
+    text-decoration: none;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 0.85rem 1.5rem;
+    border-bottom: 0.5px solid var(--noir-border);
+    display: block;
+    transition: color 0.2s, background 0.2s;
+  }
+
+  .menu-overlay a:hover { color: var(--or); background: rgba(201,168,76,0.05); }
+  .menu-overlay a.menu-vip { color: var(--or); }
+  .menu-overlay a.menu-vip:hover { color: var(--or-light); }
+
+  .nav-cta {
+    background: var(--or);
+    color: var(--noir) !important;
+    padding: 0.5rem 1.2rem;
+    border-radius: 2px;
+    font-weight: 500 !important;
+  }
+
+  .nav-cta:hover { background: var(--or-light) !important; color: var(--noir) !important; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8rem 2rem 4rem;
+    position: relative;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    border: 0.5px solid rgba(201,168,76,0.08);
+    pointer-events: none;
+  }
+
+  .hero-eye {
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.2s;
+  }
+
+  .hero-titre {
+    font-family: var(--font-titre);
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    font-weight: 700;
+    color: var(--or);
+    letter-spacing: 6px;
+    line-height: 1;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.4s;
+  }
+
+  .hero-slogan {
+    font-size: clamp(0.95rem, 2vw, 1.15rem);
+    color: var(--gris);
+    letter-spacing: 1px;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.6s;
+  }
+
+  .hero-slogan span { color: var(--blanc); }
+
+  .hero-btns {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.8s;
+  }
+
+  .btn-or {
+    background: var(--or);
+    color: var(--noir);
+    padding: 0.85rem 2rem;
+    border: none;
+    border-radius: 2px;
+    font-family: var(--font-corps);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.3s, transform 0.2s;
+  }
+
+  .btn-or:hover { background: var(--or-light); transform: translateY(-2px); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--or);
+    padding: 0.85rem 2rem;
+    border: 0.5px solid var(--or);
+    border-radius: 2px;
+    font-family: var(--font-corps);
+    font-size: 0.8rem;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+
+  .btn-ghost:hover { background: rgba(201,168,76,0.08); transform: translateY(-2px); }
+
+  /* STATS */
+  .stats {
+    padding: 5rem 4rem;
+    border-top: 0.5px solid var(--noir-border);
+    border-bottom: 0.5px solid var(--noir-border);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .stat-item {
+    text-align: center;
+    padding: 2rem 1rem;
+    border-right: 0.5px solid var(--noir-border);
+  }
+
+  .stat-item:last-child { border-right: none; }
+
+  .stat-num {
+    font-family: var(--font-titre);
+    font-size: 2.8rem;
+    color: var(--or);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.72rem;
+    letter-spacing: 2px;
+    color: var(--gris);
+    text-transform: uppercase;
+  }
+
+  /* SECTION GÉNÉRIQUE */
+  section {
+    padding: 6rem 4rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-tag {
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    color: var(--or);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .section-titre {
+    font-family: var(--font-titre);
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    color: var(--blanc);
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+  }
+
+  .section-texte {
+    color: var(--gris);
+    font-size: 1rem;
+    max-width: 560px;
+    line-height: 1.9;
+  }
+
+  /* POURQUOI */
+  .pourquoi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1px;
+    background: var(--noir-border);
+    border: 0.5px solid var(--noir-border);
+    margin-top: 4rem;
+  }
+
+  .pourquoi-item {
+    background: var(--noir-card);
+    padding: 2.5rem 2rem;
+    transition: background 0.3s;
+  }
+
+  .pourquoi-item:hover { background: #161616; }
+
+  .pourquoi-icon {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 1.5rem;
+  }
+
+  .pourquoi-titre {
+    font-family: var(--font-titre);
+    font-size: 1.15rem;
+    color: var(--blanc);
+    margin-bottom: 0.75rem;
+  }
+
+  .pourquoi-texte {
+    font-size: 0.88rem;
+    color: var(--gris);
+    line-height: 1.8;
+  }
+
+  /* SPORTS */
+  .sports-section { background: var(--noir-card); }
+
+  .sports-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 6rem 4rem;
+  }
+
+  .sports-grid {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 3rem;
+  }
+
+  .sport-pill {
+    border: 0.5px solid var(--noir-border);
+    padding: 0.8rem 1.5rem;
+    border-radius: 100px;
+    font-size: 0.85rem;
+    color: var(--gris);
+    transition: all 0.3s;
+    cursor: default;
+  }
+
+  .sport-pill:hover, .sport-pill.active {
+    border-color: var(--or);
+    color: var(--or);
+    background: rgba(201,168,76,0.05);
+  }
+
+  /* VIP */
+  .vip-section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 6rem 4rem;
+  }
+
+  .vip-card {
+    border: 0.5px solid var(--or);
+    background: var(--noir-card);
+    padding: 3.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .vip-liste {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  .vip-liste li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 0.92rem;
+    color: var(--gris);
+  }
+
+  .vip-liste li::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    background: var(--or);
+    border-radius: 50%;
+    margin-top: 9px;
+    flex-shrink: 0;
+  }
+
+  .vip-prix {
+    font-family: var(--font-titre);
+    font-size: 3.5rem;
+    color: var(--or);
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+
+  .vip-prix-label {
+    font-size: 0.75rem;
+    color: var(--gris);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+
+  .vip-note {
+    font-size: 0.78rem;
+    color: var(--gris);
+    margin-top: 1rem;
+    font-style: italic;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 0.5px solid var(--noir-border);
+    padding: 3rem 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .footer-logo {
+    font-family: var(--font-titre);
+    font-size: 1.1rem;
+    color: var(--or);
+    letter-spacing: 3px;
+  }
+
+  .footer-tagline {
+    font-size: 0.72rem;
+    letter-spacing: 3px;
+    color: #444;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 1.25rem 2rem;
+    list-style: none;
+    flex-wrap: wrap;
+  }
+
+  .footer-links a {
+    color: var(--gris);
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    transition: color 0.3s;
+  }
+
+  .footer-links a:hover { color: var(--or); }
+
+  .footer-copy {
+    font-size: 0.72rem;
+    color: #333;
+    width: 100%;
+    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 0.5px solid var(--noir-border);
+    margin-top: 1rem;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.1); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    section, .sports-wrapper, .vip-section { padding: 4rem 1.5rem; }
+    .stats { padding: 3rem 1.5rem; }
+    footer { padding: 2rem 1.5rem; flex-direction: column; align-items: flex-start; }
+    .vip-card { grid-template-columns: 1fr; gap: 2rem; padding: 2rem; }
+    .stat-item { border-right: none; border-bottom: 0.5px solid var(--noir-border); }
+    .stat-item:last-child { border-bottom: none; }
+    #choix-grid { grid-template-columns: 1fr !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">BETVISION<span style="display:block;font-family:var(--font-corps);font-size:0.55rem;letter-spacing:2px;color:var(--gris);font-weight:300;margin-top:2px;text-transform:uppercase;">On décrypte le sport, tu décides.</span></a>
+  <div style="display:flex; align-items:center; gap: 1rem;">
+    <a href="index.html" class="nav-home">⌂ Home</a>
+    <button class="hamburger" id="burger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MENU OVERLAY -->
+<div class="menu-overlay" id="menu">
+  <a href="index.html">Accueil</a>
+  <a href="analyses.html">Le prono du jour</a>
+  <a href="https://t.me/BettingVisionfr" target="_blank">Communauté Telegram</a>
+  <a href="bilan.html">Bilan</a>
+  <a href="rejoindre.html" class="menu-vip">Nous rejoindre <span style="background:#C9A84C;color:#0A0A0A;font-size:0.6rem;font-weight:500;padding:2px 6px;border-radius:2px;letter-spacing:1px;margin-left:6px;vertical-align:middle;">VIP</span></a>
+  <a href="contact.html">Contact</a>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div>
+    <div class="hero-eye">
+      <svg width="64" height="38" viewBox="0 0 64 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="32" cy="19" rx="30" ry="17" stroke="#C9A84C" stroke-width="1.5"/>
+        <circle cx="32" cy="19" r="8" fill="#C9A84C"/>
+        <circle cx="32" cy="19" r="3.5" fill="#0A0A0A"/>
+        <circle cx="29.5" cy="16.5" r="1.5" fill="#C9A84C"/>
+      </svg>
+    </div>
+    <h1 class="hero-titre">BETVISION</h1>
+    <p class="hero-slogan">On décrypte le sport, tu décides.</p>
+    <div class="hero-btns" style="flex-direction:column; align-items:center;">
+      <a href="vip.html" class="btn-or">Accès VIP</a>
+      <a href="https://t.me/BettingVisionfr" target="_blank" style="display:inline-flex;align-items:center;gap:8px;color:var(--gris);text-decoration:none;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;margin-top:0.75rem;padding:0.6rem 1.25rem;border:0.5px solid #333;border-radius:2px;transition:all 0.2s;" onmouseover="this.style.borderColor='#C9A84C';this.style.color='#C9A84C'" onmouseout="this.style.borderColor='#333';this.style.color='#888'">Rejoins notre Telegram gratuit →</a>
+    </div>
+  </div>
+</div>
+
+<!-- POURQUOI -->
+<section>
+  <span class="section-tag reveal">Pourquoi BetVision</span>
+  <h2 class="section-titre reveal">Pas de gourou.<br>Juste de la méthode.</h2>
+  <p class="section-texte reveal">On ne te promet pas de t'enrichir. On t'aide à comprendre le sport différemment, à analyser avant de miser, et à progresser à ton rythme.</p>
+
+  <div class="pourquoi-grid">
+    <div class="pourquoi-item reveal">
+      <svg class="pourquoi-icon" viewBox="0 0 36 36" fill="none">
+        <circle cx="18" cy="18" r="17" stroke="#C9A84C" stroke-width="1"/>
+        <circle cx="18" cy="18" r="6" fill="#C9A84C"/>
+        <circle cx="18" cy="18" r="2.5" fill="#0A0A0A"/>
+      </svg>
+      <div class="pourquoi-titre">3 sports, une seule méthode</div>
+      <p class="pourquoi-texte">Football, tennis, NBA — on analyse ce qu'on maîtrise, pas tout et n'importe quoi.</p>
+    </div>
+    <div class="pourquoi-item reveal">
+      <svg class="pourquoi-icon" viewBox="0 0 36 36" fill="none">
+        <rect x="2" y="8" width="32" height="22" rx="2" stroke="#C9A84C" stroke-width="1"/>
+        <line x1="2" y1="14" x2="34" y2="14" stroke="#C9A84C" stroke-width="0.5"/>
+        <line x1="10" y1="20" x2="26" y2="20" stroke="#C9A84C" stroke-width="0.5"/>
+        <line x1="10" y1="24" x2="22" y2="24" stroke="#C9A84C" stroke-width="0.5"/>
+      </svg>
+      <div class="pourquoi-titre">Transparence totale</div>
+      <p class="pourquoi-texte">Un bilan mensuel complet. Les bons mois comme les mauvais, parce que c'est ça la réalité.</p>
+    </div>
+    <div class="pourquoi-item reveal">
+      <svg class="pourquoi-icon" viewBox="0 0 36 36" fill="none">
+        <path d="M18 4L22 14H33L24 21L27 32L18 25L9 32L12 21L3 14H14L18 4Z" stroke="#C9A84C" stroke-width="1" fill="none"/>
+      </svg>
+      <div class="pourquoi-titre">On parie pas à ta place</div>
+      <p class="pourquoi-texte">On explique le raisonnement derrière chaque analyse. L'objectif c'est que tu comprennes, pas que tu suives aveuglément.</p>
+    </div>
+    <div class="pourquoi-item reveal">
+      <svg class="pourquoi-icon" viewBox="0 0 36 36" fill="none">
+        <circle cx="12" cy="14" r="5" stroke="#C9A84C" stroke-width="1"/>
+        <circle cx="24" cy="14" r="5" stroke="#C9A84C" stroke-width="1"/>
+        <path d="M2 30C2 24 6.5 20 12 20" stroke="#C9A84C" stroke-width="1"/>
+        <path d="M34 30C34 24 29.5 20 24 20" stroke="#C9A84C" stroke-width="1"/>
+        <path d="M18 22C21 22 24 24 24 28" stroke="#C9A84C" stroke-width="0.5" stroke-dasharray="2 2"/>
+      </svg>
+      <div class="pourquoi-titre">La communauté</div>
+      <p class="pourquoi-texte">Débutants et confirmés dans le même canal. On s'entraide, on débat, on progresse ensemble.</p>
+    </div>
+  </div>
+</section>
+
+<!-- OFFRE GRATUITE -->
+<div class="sports-section">
+  <div class="sports-wrapper">
+    <span class="section-tag reveal">100% gratuit</span>
+    <h2 class="section-titre reveal">Commence sans<br>débourser un euro.</h2>
+    <p class="section-texte reveal" style="margin-bottom: 3rem;">Chaque semaine, on partage 3 à 4 analyses gratuites sur nos réseaux. Pas de fioriture — juste le raisonnement, la cote et le sport concerné.</p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1px; background: var(--noir-border); border: 0.5px solid var(--noir-border);">
+
+      <div style="background: var(--noir); padding: 2.5rem 2rem;" class="reveal">
+        <div style="font-size: 0.7rem; letter-spacing: 3px; color: var(--or); text-transform: uppercase; margin-bottom: 1rem;">Football</div>
+        <div style="font-family: var(--font-titre); font-size: 1.3rem; color: var(--blanc); margin-bottom: 0.75rem;">Toutes les grandes compétitions</div>
+        <p style="font-size: 0.88rem; color: var(--gris); line-height: 1.8;">On décortique les matchs qui valent le coup. Stats, contexte, forme du moment.</p>
+      </div>
+
+      <div style="background: var(--noir); padding: 2.5rem 2rem;" class="reveal">
+        <div style="font-size: 0.7rem; letter-spacing: 3px; color: var(--or); text-transform: uppercase; margin-bottom: 1rem;">Tennis</div>
+        <div style="font-family: var(--font-titre); font-size: 1.3rem; color: var(--blanc); margin-bottom: 0.75rem;">ATP et Grand Chelem</div>
+        <p style="font-size: 0.88rem; color: var(--gris); line-height: 1.8;">Le tennis se joue autant dans les stats que sur le court. On te montre comment lire un match.</p>
+      </div>
+
+      <div style="background: var(--noir); padding: 2.5rem 2rem;" class="reveal">
+        <div style="font-size: 0.7rem; letter-spacing: 3px; color: var(--or); text-transform: uppercase; margin-bottom: 1rem;">NBA</div>
+        <div style="font-family: var(--font-titre); font-size: 1.3rem; color: var(--blanc); margin-bottom: 0.75rem;">Toute la saison NBA</div>
+        <p style="font-size: 0.88rem; color: var(--gris); line-height: 1.8;">Stats avancées, contexte de match, forme récente — on va plus loin que le simple palmarès.</p>
+      </div>
+
+    </div>
+
+    <div style="margin-top: 2.5rem; display: flex; gap: 1rem; flex-wrap: wrap;" class="reveal">
+      <div style="border: 0.5px solid var(--noir-border); border-left: 2px solid var(--or); padding: 1.25rem 1.5rem; flex: 1; min-width: 220px;">
+        <div style="font-size: 0.7rem; letter-spacing: 2px; color: var(--or); text-transform: uppercase; margin-bottom: 0.5rem;">Rythme</div>
+        <div style="font-size: 1.5rem; font-family: var(--font-titre); color: var(--blanc);">3 à 4 analyses</div>
+        <div style="font-size: 0.8rem; color: var(--gris);">par semaine, gratuitement</div>
+      </div>
+      <div style="border: 0.5px solid var(--noir-border); border-left: 2px solid var(--or); padding: 1.25rem 1.5rem; flex: 1; min-width: 220px;">
+        <div style="font-size: 0.7rem; letter-spacing: 2px; color: var(--or); text-transform: uppercase; margin-bottom: 0.5rem;">Disponible sur</div>
+        <div style="display:flex; gap: 0.75rem; flex-wrap:wrap; margin-top:4px;">
+          <a href="https://x.com/betvision_fr" target="_blank" style="font-family:var(--font-titre);font-size:1rem;color:var(--blanc);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#F5F0E8'">𝕏</a>
+          <span style="color:var(--gris);">·</span>
+          <a href="https://instagram.com/betvision_fr" target="_blank" style="font-family:var(--font-titre);font-size:1rem;color:var(--blanc);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#F5F0E8'">Instagram</a>
+          <span style="color:var(--gris);">·</span>
+          <a href="https://tiktok.com/@betvision_fr" target="_blank" style="font-family:var(--font-titre);font-size:1rem;color:var(--blanc);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#F5F0E8'">TikTok</a>
+        </div>
+      </div>
+      <div style="border: 0.5px solid var(--noir-border); border-left: 2px solid var(--or); padding: 1.25rem 1.5rem; flex: 1; min-width: 220px;">
+        <div style="font-size: 0.7rem; letter-spacing: 2px; color: var(--or); text-transform: uppercase; margin-bottom: 0.5rem;">Sans inscription</div>
+        <div style="font-size: 1.5rem; font-family: var(--font-titre); color: var(--blanc);">Accès direct</div>
+        <div style="font-size: 0.8rem; color: var(--gris);">aucun compte requis</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stats-grid">
+    <div class="stat-item reveal">
+      <div class="stat-num">—</div>
+      <div class="stat-label">Taux de réussite</div>
+    </div>
+    <div class="stat-item reveal">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Matchs analysés</div>
+    </div>
+    <div class="stat-item reveal">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Sports couverts</div>
+    </div>
+    <div class="stat-item reveal">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Bilans transparents</div>
+    </div>
+  </div>
+</div>
+
+<!-- GRATUIT VS VIP -->
+<div class="vip-section">
+  <span class="section-tag reveal">Deux niveaux, un seul objectif</span>
+  <h2 class="section-titre reveal">Commence gratuit,<br>évolue quand tu veux.</h2>
+  <p class="section-texte reveal" style="margin-bottom: 3rem;">Pas besoin de sortir ta carte bleue pour débuter. Le gratuit est déjà solide — le VIP c'est juste le niveau au-dessus, sans te ruiner.</p>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--noir-border);" class="reveal" id="choix-grid">
+
+    <!-- GRATUIT -->
+    <div style="background: var(--noir-card); padding: 2.5rem 2rem;">
+      <div style="font-size: 0.7rem; letter-spacing: 3px; color: var(--gris); text-transform: uppercase; margin-bottom: 1.5rem;">Gratuit</div>
+      <div style="font-family: var(--font-titre); font-size: 2.2rem; color: var(--blanc); margin-bottom: 0.25rem;">0€</div>
+      <div style="font-size: 0.75rem; color: var(--gris); letter-spacing: 1px; margin-bottom: 2rem;">pour toujours</div>
+      <ul class="vip-liste">
+        <li>3 à 4 analyses par semaine</li>
+        <li>Football, Tennis, NBA</li>
+        <li>Raisonnement + cote pour chaque bet</li>
+        <li>Disponible sur X, Instagram, TikTok</li>
+        <li>Bilan mensuel public</li>
+      </ul>
+      <div style="margin-top: 2rem; padding: 1rem; border: 0.5px solid var(--noir-border); font-size: 0.8rem; color: var(--gris); line-height: 1.7;">
+        Idéal pour voir si ça te correspond avant de t'engager.
+      </div>
+    </div>
+
+    <!-- VIP -->
+    <div style="background: var(--noir); padding: 2.5rem 2rem; border: 0.5px solid var(--or); position: relative;">
+      <div style="position: absolute; top: -1px; left: 2rem; background: var(--or); color: var(--noir); font-size: 0.65rem; font-weight: 500; letter-spacing: 2px; padding: 3px 10px; text-transform: uppercase;">Recommandé</div>
+      <div style="font-size: 0.7rem; letter-spacing: 3px; color: var(--or); text-transform: uppercase; margin-bottom: 1.5rem;">VIP Telegram</div>
+      <div style="font-family: var(--font-titre); font-size: 2.2rem; color: var(--or); margin-bottom: 0.25rem;">9,90€</div>
+      <div style="font-size: 0.75rem; color: var(--gris); letter-spacing: 1px; margin-bottom: 0.75rem;">par mois · sans engagement · résiliable à tout moment</div>
+      <div style="font-size: 0.88rem; color: var(--gris); margin-bottom: 1.5rem; line-height: 1.7;">Même méthode, plus de profondeur. Pour ceux qui veulent vraiment progresser.</div>
+      <ul class="vip-liste">
+        <li><span style="color: var(--blanc);">1 à 2 pronostics par jour</span></li>
+        <li><span style="color: var(--blanc);">Analyses détaillées</span></li>
+        <li><span style="color: var(--blanc);">Canal Telegram exclusif</span> réservé aux membres</li>
+        <li><span style="color: var(--blanc);">Bilan mensuel</span> avec transparence totale</li>
+      </ul>
+      <div style="margin-top: 2rem;">
+        <a href="vip.html" class="btn-or" style="display:inline-block; width: 100%; text-align: center;">Rejoindre le VIP — 9,90€/mois</a>
+        <p style="font-size: 0.75rem; color: var(--gris); margin-top: 0.75rem; text-align: center;">Moins qu'un pari perdu 😉</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="margin-top: 1rem; padding: 1rem 1.5rem; border: 0.5px solid var(--noir-border); font-size: 0.78rem; color: var(--gris); text-align: center;" class="reveal">
+    Tarif fondateur — les premiers membres profitent du meilleur prix. Le tarif augmentera avec la croissance de la communauté.
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">BETVISION</div>
+    <div class="footer-tagline">Décrypte · Partage · Progresse</div>
+  </div>
+  <ul class="footer-links">
+    <li><a href="index.html">Accueil</a></li>
+    <li><a href="analyses.html">Le prono du jour</a></li>
+    <li><a href="bilan.html">Bilan</a></li>
+    <li><a href="rejoindre.html">Nous rejoindre <span style="background:#C9A84C;color:#0A0A0A;font-size:0.55rem;font-weight:500;padding:1px 5px;border-radius:2px;letter-spacing:1px;margin-left:4px;vertical-align:middle;">VIP</span></a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="footer-copy">© 2026 BetVision — Le pari reste toujours ton choix. Jouer comporte des risques, jouez de manière responsable.</div>
+</footer>
+
+<script>
+  const burger = document.getElementById('burger');
+  const menu = document.getElementById('menu');
+  burger.addEventListener('click', () => {
+    burger.classList.toggle('open');
+    menu.classList.toggle('open');
+    document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+  });
+  menu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      burger.classList.remove('open');
+      menu.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  });
+
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  document.querySelectorAll('.sport-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.sport-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

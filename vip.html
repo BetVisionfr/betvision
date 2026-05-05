@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIP — BetVision</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --or:#C9A84C;--or-light:#E2C47A;--noir:#0A0A0A;--noir-card:#131313;
+    --noir-border:#1E1E1E;--gris:#888;--blanc:#F5F0E8;--vert-light:#52B788;
+    --font-titre:'Playfair Display',serif;--font-corps:'DM Sans',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--noir);color:var(--blanc);font-family:var(--font-corps);font-weight:300;line-height:1.7;overflow-x:hidden;min-height:100vh;}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.2rem 4rem;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--noir-border);background:rgba(10,10,10,0.92);backdrop-filter:blur(12px);}
+  .nav-logo{font-family:var(--font-titre);font-size:1.3rem;color:var(--or);letter-spacing:3px;text-decoration:none;}
+  .nav-home{background:transparent;color:var(--gris);border:0.5px solid var(--noir-border);padding:0.4rem 1rem;border-radius:2px;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;text-decoration:none;transition:all 0.3s;}
+  .nav-home:hover{border-color:var(--or);color:var(--or);}
+  .hamburger{display:flex;flex-direction:column;gap:5px;cursor:pointer;padding:6px;background:none;border:none;z-index:200;}
+  .hamburger span{display:block;width:24px;height:1.5px;background:var(--or);transition:all 0.3s ease;}
+  .hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
+  .hamburger.open span:nth-child(2){opacity:0;}
+  .hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+  .menu-overlay{position:fixed;top:58px;right:2rem;background:rgba(10,10,10,0.97);border:0.5px solid var(--noir-border);border-radius:4px;z-index:150;min-width:220px;opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity 0.25s ease,transform 0.25s ease;backdrop-filter:blur(12px);}
+  .menu-overlay.open{opacity:1;transform:translateY(0);pointer-events:all;}
+  .menu-overlay a{font-family:var(--font-corps);font-size:0.8rem;color:var(--blanc);text-decoration:none;letter-spacing:2px;text-transform:uppercase;padding:0.85rem 1.5rem;border-bottom:0.5px solid var(--noir-border);display:block;transition:color 0.2s,background 0.2s;}
+  .menu-overlay a:last-child{border-bottom:none;}
+  .menu-overlay a:hover{color:var(--or);background:rgba(201,168,76,0.05);}
+  .menu-overlay a.menu-vip{color:var(--or);}
+
+  /* PAGE */
+  .page{max-width:640px;margin:0 auto;padding:9rem 2rem 5rem;text-align:center;}
+
+  /* HEADER */
+  .tag{font-size:0.7rem;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:1.25rem;display:block;opacity:0;animation:fadeUp 0.7s ease forwards 0.1s;}
+  .titre{font-family:var(--font-titre);font-size:clamp(2.2rem,6vw,3.8rem);color:var(--blanc);line-height:1.15;margin-bottom:1rem;opacity:0;animation:fadeUp 0.7s ease forwards 0.2s;}
+  .sous-titre{font-size:0.95rem;color:var(--gris);max-width:420px;margin:0 auto 3rem;opacity:0;animation:fadeUp 0.7s ease forwards 0.3s;}
+
+  /* CARD VIP */
+  .card{border:0.5px solid var(--or);background:var(--noir-card);padding:3rem 2.5rem;margin-bottom:1.5rem;text-align:left;opacity:0;animation:fadeUp 0.7s ease forwards 0.4s;}
+
+  .card-prix{display:flex;align-items:baseline;gap:8px;margin-bottom:0.25rem;}
+  .prix{font-family:var(--font-titre);font-size:3.5rem;color:var(--or);line-height:1;}
+  .prix-mois{font-size:0.8rem;color:var(--gris);letter-spacing:2px;}
+  .prix-note{font-size:0.75rem;color:var(--gris);margin-bottom:2.5rem;}
+
+  .liste{list-style:none;display:flex;flex-direction:column;gap:0.85rem;margin-bottom:2.5rem;}
+  .liste li{display:flex;align-items:flex-start;gap:12px;font-size:0.9rem;color:var(--blanc);}
+  .liste li::before{content:'';width:5px;height:5px;background:var(--or);border-radius:50%;margin-top:9px;flex-shrink:0;}
+
+  .btn-vip{display:block;background:var(--or);color:var(--noir);padding:1.1rem 2rem;border:none;border-radius:2px;font-family:var(--font-corps);font-size:0.82rem;font-weight:500;letter-spacing:3px;text-transform:uppercase;cursor:pointer;text-decoration:none;text-align:center;transition:background 0.2s,transform 0.15s;width:100%;}
+  .btn-vip:hover{background:var(--or-light);transform:translateY(-2px);}
+  .btn-note{font-size:0.72rem;color:var(--gris);text-align:center;margin-top:0.85rem;font-style:italic;}
+
+  /* GRATUIT */
+  .gratuit-link{display:flex;align-items:center;justify-content:center;gap:8px;font-size:0.8rem;color:var(--gris);text-decoration:none;padding:1rem;border:0.5px solid var(--noir-border);transition:all 0.2s;opacity:0;animation:fadeUp 0.7s ease forwards 0.5s;}
+  .gratuit-link:hover{color:var(--blanc);border-color:var(--gris);}
+
+  /* MENTION */
+  .mention{font-size:0.72rem;color:#444;margin-top:2.5rem;line-height:1.7;opacity:0;animation:fadeUp 0.7s ease forwards 0.6s;}
+
+  footer{border-top:0.5px solid var(--noir-border);padding:2rem 4rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-top:4rem;}
+  .footer-logo{font-family:var(--font-titre);font-size:1.1rem;color:var(--or);letter-spacing:3px;}
+  .footer-tagline{font-size:0.68rem;letter-spacing:3px;color:#444;text-transform:uppercase;margin-top:4px;}
+  .footer-copy{font-size:0.7rem;color:#333;width:100%;text-align:center;padding-top:1.5rem;border-top:0.5px solid var(--noir-border);margin-top:0.5rem;}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+
+  @media(max-width:600px){
+    nav{padding:1rem 1.5rem;}
+    .page{padding:7rem 1.25rem 4rem;}
+    .card{padding:2rem 1.5rem;}
+    footer{padding:2rem 1.5rem;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">BETVISION<span style="display:block;font-family:var(--font-corps);font-size:0.55rem;letter-spacing:2px;color:var(--gris);font-weight:300;margin-top:2px;text-transform:uppercase;">On décrypte le sport, tu décides.</span></a>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <a href="index.html" class="nav-home">⌂ Home</a>
+    <button class="hamburger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="menu-overlay" id="menu">
+  <a href="index.html">Accueil</a>
+  <a href="analyses.html">Le prono du jour</a>
+  <a href="https://t.me/BettingVisionfr" target="_blank">Communauté Telegram</a>
+  <a href="bilan.html">Bilan</a>
+  <a href="vip.html" class="menu-vip">Nous rejoindre <span style="background:#C9A84C;color:#0A0A0A;font-size:0.6rem;font-weight:500;padding:2px 6px;border-radius:2px;letter-spacing:1px;margin-left:6px;vertical-align:middle;">VIP</span></a>
+  <a href="contact.html">Contact</a>
+</div>
+
+<div class="page">
+
+  <span class="tag">Accès VIP</span>
+  <h1 class="titre">Passe au niveau<br>supérieur.</h1>
+  <p class="sous-titre">Même méthode que le gratuit — mais en plus complet, plus direct, plus profond.</p>
+
+  <div class="card">
+    <div class="card-prix">
+      <div class="prix">9,90€</div>
+      <div class="prix-mois">/ mois</div>
+    </div>
+    <div class="prix-note">Sans engagement · résiliable à tout moment</div>
+
+    <ul class="liste">
+      <li>1 à 2 pronostics par jour</li>
+      <li>Analyses détaillées</li>
+      <li>Canal Telegram exclusif réservé aux membres</li>
+      <li>Bilan mensuel avec transparence totale</li>
+    </ul>
+
+    <a href="https://buy.stripe.com/14A7sFejB3hy0Nv0Vi8Ra02" target="_blank" class="btn-vip">Rejoindre le canal VIP →</a>
+    <p class="btn-note">Moins qu'un pari perdu 😉</p>
+  </div>
+
+  <a href="analyses.html" class="gratuit-link">
+    Voir le contenu gratuit d'abord →
+  </a>
+
+  <p class="mention">Le pari sportif comporte des risques. Ne misez que ce que vous pouvez vous permettre de perdre. Aucun gain n'est garanti.</p>
+
+</div>
+
+<footer>
+  <div>
+    <div class="footer-logo">BETVISION</div>
+    <div class="footer-tagline">Décrypte · Partage · Progresse</div>
+  </div>
+  <ul style="display:flex;gap:2rem;list-style:none;flex-wrap:wrap;"><li><a href="index.html" style="color:var(--gris);text-decoration:none;font-size:0.8rem;letter-spacing:1px;transition:color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#888'">Accueil</a></li><li><a href="analyses.html" style="color:var(--gris);text-decoration:none;font-size:0.8rem;letter-spacing:1px;transition:color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#888'">Le prono du jour</a></li><li><a href="bilan.html" style="color:var(--gris);text-decoration:none;font-size:0.8rem;letter-spacing:1px;transition:color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#888'">Bilan</a></li><li><a href="rejoindre.html" style="color:var(--gris);text-decoration:none;font-size:0.8rem;letter-spacing:1px;transition:color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#888'">Nous rejoindre <span style="background:#C9A84C;color:#0A0A0A;font-size:0.55rem;font-weight:500;padding:1px 5px;border-radius:2px;letter-spacing:1px;margin-left:4px;vertical-align:middle;">VIP</span></a></li><li><a href="contact.html" style="color:var(--gris);text-decoration:none;font-size:0.8rem;letter-spacing:1px;transition:color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#888'">Contact</a></li></ul>
+  <div class="footer-copy">© 2026 BetVision — Jouer comporte des risques, jouez de manière responsable.</div>
+</footer>
+
+<script>
+const burger = document.getElementById('burger');
+const menu = document.getElementById('menu');
+burger.addEventListener('click', () => {
+  burger.classList.toggle('open');
+  menu.classList.toggle('open');
+  document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+});
+menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  burger.classList.remove('open');
+  menu.classList.remove('open');
+  document.body.style.overflow = '';
+}));
+</script>
+</body>
+</html>

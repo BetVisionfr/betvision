@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bilan & résultats — Pronostics sportifs | BetVision</title>
+<meta name="description" content="Tous nos résultats de paris sportifs publiés chaque mois. Taux de réussite et ROI transparents. Foot, tennis et NBA."/>
+<meta name="keywords" content="bilan pronostic, résultats paris sportifs, taux réussite tipster, ROI pari sportif, transparence pronostic"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --or:#C9A84C;--or-light:#E2C47A;--noir:#0A0A0A;--noir-card:#131313;
+    --noir-border:#1E1E1E;--gris:#888;--blanc:#F5F0E8;
+    --vert-light:#52B788;--rouge-light:#E07A7A;
+    --font-titre:'Playfair Display',serif;--font-corps:'DM Sans',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--noir);color:var(--blanc);font-family:var(--font-corps);font-weight:300;line-height:1.7;overflow-x:hidden;}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.2rem 4rem;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--noir-border);background:rgba(10,10,10,0.92);backdrop-filter:blur(12px);}
+  .nav-logo{font-family:var(--font-titre);font-size:1.3rem;color:var(--or);letter-spacing:3px;text-decoration:none;}
+  .nav-home{background:transparent;color:var(--gris);border:0.5px solid var(--noir-border);padding:0.4rem 1rem;border-radius:2px;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;text-decoration:none;transition:all 0.3s;}
+  .nav-home:hover{border-color:var(--or);color:var(--or);}
+  .hamburger{display:flex;flex-direction:column;gap:5px;cursor:pointer;padding:6px;background:none;border:none;z-index:200;}
+  .hamburger span{display:block;width:24px;height:1.5px;background:var(--or);transition:all 0.3s ease;}
+  .hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
+  .hamburger.open span:nth-child(2){opacity:0;}
+  .hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+  .menu-overlay{position:fixed;top:58px;right:2rem;background:rgba(10,10,10,0.97);border:0.5px solid var(--noir-border);border-radius:4px;z-index:150;min-width:220px;opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity 0.25s ease,transform 0.25s ease;backdrop-filter:blur(12px);}
+  .menu-overlay.open{opacity:1;transform:translateY(0);pointer-events:all;}
+  .menu-overlay a{font-family:var(--font-corps);font-size:0.8rem;color:var(--blanc);text-decoration:none;letter-spacing:2px;text-transform:uppercase;padding:0.85rem 1.5rem;border-bottom:0.5px solid var(--noir-border);display:block;transition:color 0.2s,background 0.2s;}
+  .menu-overlay a:last-child{border-bottom:none;}
+  .menu-overlay a:hover{color:var(--or);background:rgba(201,168,76,0.05);}
+  .menu-overlay a.menu-vip{color:var(--or);}
+
+  .page{max-width:800px;margin:0 auto;padding:8rem 2rem 5rem;}
+
+  .section-tag{font-size:0.7rem;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:1rem;display:block;}
+  .page-titre{font-family:var(--font-titre);font-size:clamp(2rem,5vw,3rem);color:var(--blanc);line-height:1.2;margin-bottom:0.5rem;}
+  .page-sub{font-size:0.9rem;color:var(--gris);margin-bottom:3rem;}
+
+  /* KPI */
+  .kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--noir-border);margin-bottom:3rem;}
+  .kpi-item{background:var(--noir-card);padding:1.5rem 1.25rem;text-align:center;}
+  .kpi-num{font-family:var(--font-titre);font-size:2rem;color:var(--or);line-height:1;margin-bottom:4px;}
+  .kpi-label{font-size:0.65rem;letter-spacing:2px;color:var(--gris);text-transform:uppercase;}
+
+  /* GRAPHIQUE */
+  .chart-wrap{background:var(--noir-card);border:0.5px solid var(--noir-border);padding:1.5rem;margin-bottom:2rem;}
+  .chart-title{font-size:0.68rem;letter-spacing:3px;color:var(--gris);text-transform:uppercase;margin-bottom:1.5rem;}
+  .bars{display:flex;align-items:flex-end;gap:6px;height:100px;}
+  .bar-group{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;}
+  .bar{border-radius:2px 2px 0 0;width:100%;transition:opacity 0.2s;}
+  .bar:hover{opacity:0.8;}
+  .bar-label{font-size:0.58rem;color:var(--gris);letter-spacing:0.5px;text-align:center;}
+
+  /* TABLEAU */
+  .table-wrap{overflow-x:auto;border:0.5px solid var(--noir-border);}
+  table{width:100%;border-collapse:collapse;font-size:0.85rem;}
+  thead tr{border-bottom:0.5px solid var(--noir-border);background:var(--noir-card);}
+  th{padding:0.85rem 1.25rem;text-align:left;font-size:0.65rem;letter-spacing:2px;color:var(--gris);text-transform:uppercase;font-weight:400;}
+  td{padding:0.85rem 1.25rem;border-bottom:0.5px solid var(--noir-border);color:var(--blanc);}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:#111;}
+  .td-mois{font-family:var(--font-titre);}
+  .good{color:var(--vert-light);}
+  .mid{color:var(--or);}
+  .bad{color:var(--rouge-light);}
+  .pos{color:var(--vert-light);}
+  .neg{color:var(--rouge-light);}
+
+  .note{border-left:2px solid var(--or);padding:1rem 1.5rem;font-size:0.78rem;color:var(--gris);line-height:1.8;margin:2rem 0;}
+  .note span{color:var(--blanc);}
+
+  .vip-cta{margin-top:3rem;border:0.5px solid var(--noir-border);border-left:2px solid var(--or);padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;}
+  .vip-cta-text{font-size:0.9rem;color:var(--gris);}
+  .vip-cta-text strong{color:var(--blanc);display:block;font-size:1rem;margin-bottom:4px;}
+  .btn-or{background:var(--or);color:var(--noir);padding:0.75rem 1.5rem;border:none;border-radius:2px;font-family:var(--font-corps);font-size:0.75rem;font-weight:500;letter-spacing:2px;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:background 0.3s,transform 0.2s;white-space:nowrap;}
+  .btn-or:hover{background:var(--or-light);transform:translateY(-2px);}
+
+  footer{border-top:0.5px solid var(--noir-border);padding:2rem 4rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-top:5rem;}
+  .footer-logo{font-family:var(--font-titre);font-size:1.1rem;color:var(--or);letter-spacing:3px;}
+  .footer-tagline{font-size:0.68rem;letter-spacing:3px;color:#444;text-transform:uppercase;margin-top:4px;}
+  .footer-copy{font-size:0.7rem;color:#333;width:100%;text-align:center;padding-top:1.5rem;border-top:0.5px solid var(--noir-border);margin-top:0.5rem;}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+  .fade{opacity:0;animation:fadeUp 0.8s ease forwards;}
+
+  @media(max-width:700px){
+    nav{padding:1rem 1.5rem;}
+    .page{padding:7rem 1.5rem 4rem;}
+    .kpi-grid{grid-template-columns:1fr 1fr;}
+    .kpi-grid .kpi-item:last-child{grid-column:1/-1;}
+    footer{padding:2rem 1.5rem;flex-direction:column;}
+    .footer-links-wrap{display:flex;flex-wrap:wrap;gap:0.75rem 1.5rem;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">BETVISION<span style="display:block;font-family:var(--font-corps);font-size:0.55rem;letter-spacing:2px;color:var(--gris);font-weight:300;margin-top:2px;text-transform:uppercase;">On décrypte le sport, tu décides.</span></a>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <a href="index.html" class="nav-home">⌂ Home</a>
+    <button class="hamburger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="menu-overlay" id="menu">
+  <a href="index.html">Accueil</a>
+  <a href="analyses.html">Le prono du jour</a>
+  <a href="https://t.me/BettingVisionfr" target="_blank">Communauté Telegram</a>
+  <a href="bilan.html">Bilan</a>
+  <a href="vip.html" class="menu-vip">Nous rejoindre <span style="background:#C9A84C;color:#0A0A0A;font-size:0.6rem;font-weight:500;padding:2px 6px;border-radius:2px;letter-spacing:1px;margin-left:6px;vertical-align:middle;">VIP</span></a>
+  <a href="contact.html">Contact</a>
+</div>
+
+<div class="page">
+
+  <div class="fade" style="animation-delay:0.1s">
+    <span class="section-tag">Transparence totale</span>
+    <h1 class="page-titre">Bilan</h1>
+    <p class="page-sub">Tous les résultats, sans filtre. Les bons mois comme les mauvais.</p>
+  </div>
+
+  <div class="kpi-grid fade" style="animation-delay:0.2s">
+    <div class="kpi-item">
+      <div class="kpi-num" id="kpi-total">0</div>
+      <div class="kpi-label">Bets total</div>
+    </div>
+    <div class="kpi-item">
+      <div class="kpi-num" id="kpi-taux">—</div>
+      <div class="kpi-label">Taux de réussite</div>
+    </div>
+    <div class="kpi-item">
+      <div class="kpi-num" id="kpi-roi">—</div>
+      <div class="kpi-label">ROI moyen</div>
+    </div>
+  </div>
+
+  <div class="chart-wrap fade" style="animation-delay:0.3s">
+    <div class="chart-title">Taux de réussite mensuel (%)</div>
+    <div class="bars" id="chart"></div>
+  </div>
+
+  <div class="table-wrap fade" style="animation-delay:0.4s">
+    <table>
+      <thead><tr><th>Mois</th><th>Bets</th><th>Taux</th><th>ROI</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="note fade" style="animation-delay:0.5s">
+    <span>Données réelles, mises à jour chaque mois.</span> Le ROI est calculé selon notre système de mise par niveau de confiance : 10€ (⭐), 30€ (⭐⭐), 50€ (⭐⭐⭐), 80€ (⭐⭐⭐⭐), 100€ (⭐⭐⭐⭐⭐). Les résultats passés ne garantissent pas les résultats futurs.
+  </div>
+
+  <div class="vip-cta fade" style="animation-delay:0.6s">
+    <div class="vip-cta-text">
+      <strong>Tu veux accès aux bets en temps réel ?</strong>
+      1 à 2 pronostics par jour, analyses complètes — à partir de 9,90€/mois.
+    </div>
+    <a href="vip.html" class="btn-or">Rejoindre le VIP</a>
+  </div>
+
+</div>
+
+<footer>
+  <div>
+    <div class="footer-logo">BETVISION</div>
+    <div class="footer-tagline">Décrypte · Partage · Progresse</div>
+  </div>
+  <div class="footer-links-wrap">
+    <a href="index.html" style="color:var(--gris);text-decoration:none;font-size:0.8rem;letter-spacing:1px;transition:color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#888'">Accueil</a>
+    <a href="analyses.html" style="color:var(--gris);text-decoration:none;font-size:0.8rem;letter-spacing:1px;transition:color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#888'">Le prono du jour</a>
+    <a href="bilan.html" style="color:var(--gris);text-decoration:none;font-size:0.8rem;letter-spacing:1px;transition:color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#888'">Bilan</a>
+    <a href="rejoindre.html" style="color:var(--gris);text-decoration:none;font-size:0.8rem;letter-spacing:1px;transition:color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#888'">Nous rejoindre <span style="background:#C9A84C;color:#0A0A0A;font-size:0.55rem;font-weight:500;padding:1px 5px;border-radius:2px;letter-spacing:1px;margin-left:4px;vertical-align:middle;">VIP</span></a>
+    <a href="contact.html" style="color:var(--gris);text-decoration:none;font-size:0.8rem;letter-spacing:1px;transition:color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#888'">Contact</a>
+  </div>
+  <div class="footer-copy">© 2026 BetVision — Jouer comporte des risques, jouez de manière responsable.</div>
+</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCUiXW4dcjWgFSwXQo40mdiT6q3LenKWjo",
+  authDomain: "betvision-2a1e2.firebaseapp.com",
+  databaseURL: "https://betvision-2a1e2-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "betvision-2a1e2",
+  storageBucket: "betvision-2a1e2.firebasestorage.app",
+  messagingSenderId: "70887532105",
+  appId: "1:70887532105:web:fa3989c07aa15666344198"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+function tauxClass(t) { return t >= 70 ? 'good' : t >= 60 ? 'mid' : 'bad'; }
+function roiClass(r)  { return r >= 0 ? 'pos' : 'neg'; }
+
+function render(rows) {
+  if (!rows.length) return;
+  const totalBets = rows.reduce((s,r) => s + (r.picks||0), 0);
+  const avgTaux = Math.round(rows.reduce((s,r) => s + (r.taux||0), 0) / rows.length);
+  const avgRoi = Math.round(rows.reduce((s,r) => s + (r.roi||0), 0) / rows.length);
+  document.getElementById('kpi-total').textContent = totalBets;
+  document.getElementById('kpi-taux').textContent = avgTaux + '%';
+  document.getElementById('kpi-roi').textContent = (avgRoi >= 0 ? '+' : '') + avgRoi + '%';
+  const maxT = Math.max(...rows.map(r => r.taux||0));
+  document.getElementById('chart').innerHTML = rows.map(r => `
+    <div class="bar-group">
+      <div class="bar" style="height:${maxT>0?Math.round(((r.taux||0)/maxT)*90):0}px;background:${(r.taux||0)>=70?'var(--vert-light)':(r.taux||0)>=60?'var(--or)':'var(--rouge-light)'};" title="${r.taux||0}%"></div>
+      <div class="bar-label">${(r.mois||'').slice(0,3)}</div>
+    </div>`).join('');
+  document.getElementById('tbody').innerHTML = rows.map(r => `
+    <tr>
+      <td class="td-mois">${r.mois||''}</td>
+      <td>${r.picks||0}</td>
+      <td class="${tauxClass(r.taux||0)}">${r.taux||0}%</td>
+      <td class="${roiClass(r.roi||0)}">${(r.roi||0) >= 0 ? '+' : ''}${r.roi||0}%</td>
+    </tr>`).join('');
+}
+
+onValue(ref(db, 'bilan/global'), (snapshot) => {
+  const rows = snapshot.exists() ? Object.values(snapshot.val()) : [];
+  render(rows);
+});
+
+const burger = document.getElementById('burger');
+const menu = document.getElementById('menu');
+burger.addEventListener('click', () => {
+  burger.classList.toggle('open');
+  menu.classList.toggle('open');
+  document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+});
+menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  burger.classList.remove('open');
+  menu.classList.remove('open');
+  document.body.style.overflow = '';
+}));
+</script>
+</body>
+</html>
